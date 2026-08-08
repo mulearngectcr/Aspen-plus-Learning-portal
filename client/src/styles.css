@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme { --font-serif: "Fraunces", Georgia, serif; --font-sans: "Inter", sans-serif; }
+
+@layer base {
+  body { @apply m-0 font-sans text-[#1A1D1B] antialiased; }
+  input { @apply mt-1.5 block w-full rounded-lg border border-[#E4E0D6] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#14532D] focus:ring-2 focus:ring-[#E4EDE7]; }
+  label { @apply block text-sm font-medium text-stone-700; }
+  button { @apply cursor-pointer disabled:cursor-not-allowed disabled:opacity-60; }
+}
+
+@layer components {
+  .primary-button { @apply rounded-lg bg-[#14532D] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0d4022] focus:outline-none focus:ring-2 focus:ring-[#14532D] focus:ring-offset-2; }
+  .error { @apply rounded-lg bg-red-50 p-3 text-sm text-[#9B3B3B]; }
+  .success { @apply rounded-lg bg-[#E4EDE7] p-3 text-sm text-[#14532D]; }
+}
