@@ -1,20 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
 
 @theme { --font-serif: "Fraunces", Georgia, serif; --font-sans: "Inter", sans-serif; }
 
 @layer base {
-  body { @apply m-0 bg-[#FAF8F3] font-sans text-[#1A1D1B] antialiased dark:bg-slate-950 dark:text-slate-100; }
-  input { @apply mt-1.5 block w-full rounded-lg border border-[#E4E0D6] bg-white px-3 py-2.5 text-sm outline-none transition focus:border-[#14532D] focus:ring-2 focus:ring-[#E4EDE7] dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-emerald-400; }
-  label { @apply block text-sm font-medium text-stone-700 dark:text-slate-200; }
+  body { @apply m-0 bg-[#F6FAF7] font-sans text-[#13251D] antialiased; }
+  input { @apply mt-1.5 block w-full rounded-xl border border-[#D6E5D9] bg-white px-3 py-3 text-sm shadow-sm outline-none transition placeholder:text-stone-400 focus:border-[#16834A] focus:ring-4 focus:ring-[#DDF2E4]; }
+  label { @apply block text-sm font-semibold text-[#284236]; }
   button { @apply cursor-pointer disabled:cursor-not-allowed disabled:opacity-60; }
 }
 
 @layer components {
-  .primary-button { @apply rounded-lg bg-[#14532D] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0d4022] focus:outline-none focus:ring-2 focus:ring-[#14532D] focus:ring-offset-2; }
-  .error { @apply rounded-lg bg-red-50 p-3 text-sm text-[#9B3B3B] dark:bg-red-950/50 dark:text-red-200; }
-  .success { @apply rounded-lg bg-[#E4EDE7] p-3 text-sm text-[#14532D] dark:bg-emerald-950/50 dark:text-emerald-200; }
+  .primary-button { @apply rounded-xl bg-[#16834A] px-4 py-3 text-sm font-bold text-white shadow-[0_8px_18px_rgba(22,131,74,0.22)] transition hover:bg-[#0F6B3A] focus:outline-none focus:ring-4 focus:ring-[#CFECD9] focus:ring-offset-2; }
+  .error { @apply rounded-xl border border-red-100 bg-red-50 p-3 text-sm text-[#9B3B3B]; }
+  .success { @apply rounded-xl border border-[#CBE8D3] bg-[#EEF8F0] p-3 text-sm text-[#17633A]; }
 }
 
 @keyframes flame-pulse { 0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); } 50% { transform: scale(1.22); filter: drop-shadow(0 0 10px #C08A2E); } }

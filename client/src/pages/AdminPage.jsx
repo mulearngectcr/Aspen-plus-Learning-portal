@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { DarkModeToggle } from '../components/DarkModeToggle'
 import { api } from '../lib/apiClient'
 
 function ReasonModal({ title, onConfirm, onClose }) {
@@ -34,5 +33,5 @@ export function AdminModerationLog() {
 
 export default function AdminPage() {
   const location = useLocation(); const tab = location.pathname.includes('/users') ? 'users' : location.pathname.includes('/log') ? 'log' : 'feed'
-  return <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-800 dark:bg-slate-950 dark:text-slate-100"><section className="mx-auto max-w-5xl"><header className="border-b border-slate-300 pb-5 dark:border-slate-700"><p className="font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400">Elevated access</p><h1 className="mt-2 text-2xl font-semibold">Moderation dashboard</h1><nav className="mt-5 flex gap-4 text-sm"><Link className={tab === 'feed' ? 'font-semibold text-slate-900 underline dark:text-slate-100' : 'text-slate-600 dark:text-slate-300'} to="/admin">Feed</Link><Link className={tab === 'users' ? 'font-semibold text-slate-900 underline dark:text-slate-100' : 'text-slate-600 dark:text-slate-300'} to="/admin/users">Students</Link><Link className={tab === 'log' ? 'font-semibold text-slate-900 underline dark:text-slate-100' : 'text-slate-600 dark:text-slate-300'} to="/admin/log">Audit log</Link><Link className="ml-auto text-slate-600 underline dark:text-slate-300" to="/">Student view</Link><DarkModeToggle /></nav></header><div className="py-7">{tab === 'feed' ? <AdminFeed /> : tab === 'users' ? <AdminUsers /> : <AdminModerationLog />}</div></section></main>
+  return <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-800"><section className="mx-auto max-w-5xl"><header className="border-b border-slate-300 pb-5"><p className="font-mono text-xs uppercase tracking-wider text-slate-500">Elevated access</p><h1 className="mt-2 text-2xl font-semibold">Moderation dashboard</h1><nav className="mt-5 flex gap-4 text-sm"><Link className={tab === 'feed' ? 'font-semibold text-slate-900 underline' : 'text-slate-600'} to="/admin">Feed</Link><Link className={tab === 'users' ? 'font-semibold text-slate-900 underline' : 'text-slate-600'} to="/admin/users">Students</Link><Link className={tab === 'log' ? 'font-semibold text-slate-900 underline' : 'text-slate-600'} to="/admin/log">Audit log</Link><Link className="ml-auto text-slate-600 underline" to="/">Student view</Link></nav></header><div className="py-7">{tab === 'feed' ? <AdminFeed /> : tab === 'users' ? <AdminUsers /> : <AdminModerationLog />}</div></section></main>
 }
