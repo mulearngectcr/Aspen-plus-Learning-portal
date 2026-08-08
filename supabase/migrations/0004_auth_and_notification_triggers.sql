@@ -7,8 +7,8 @@ set search_path = ''
 as $$
 begin
   if new.email is null
-     or right(lower(new.email), length('@gecthrissur.ac.in')) <> '@gecthrissur.ac.in' then
-    raise exception 'Only @gecthrissur.ac.in email addresses may register'
+     or right(lower(new.email), length('@gectcr.ac.in')) <> '@gectcr.ac.in' then
+    raise exception 'Only @gectcr.ac.in email addresses may register'
       using errcode = '23514';
   end if;
 

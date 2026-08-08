@@ -1,31 +1,28 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
-import { api } from '../lib/apiClient'
+import { CreatePostForm } from '../components/CreatePostForm'
+import { DarkModeToggle } from '../components/DarkModeToggle'
+import { Feed } from '../components/Feed'
+import { Leaderboard } from '../components/Leaderboard'
+import { NotificationBell } from '../components/NotificationBell'
 
 export default function HomePage() {
-  const { profile, signOut } = useAuth()
-  const [apiState, setApiState] = useState('')
+  const { signOut } = useAuth()
+  const [newPost, setNewPost] = useState(null)
 
-  async function verifyApiClient() {
-    try {
-      await api.get('/me')
-      setApiState('Connected to the API.')
-    } catch (error) {
-      setApiState(error.message)
-    }
-  }
-
-  return <main className="min-h-screen bg-[#FAF8F3] px-4 py-7 sm:px-8">
-    <header className="mx-auto flex max-w-3xl items-center justify-between border-b border-[#E4E0D6] pb-5">
-      <span className="font-serif text-xl font-semibold text-[#14532D]">Chem-E Bootcamp</span>
-      <button className="text-sm font-medium text-stone-600 underline" onClick={() => void signOut()}>Sign out</button>
+  return <main className="min-h-screen bg-[#FAF8F3] px-4 py-7 dark:bg-slate-950 sm:px-8">
+    <header className="mx-auto flex max-w-3xl items-center justify-between border-b border-[#E4E0D6] pb-5 dark:border-slate-700">
+      <span className="font-serif text-xl font-semibold text-[#14532D] dark:text-emerald-300">Chem-E Bootcamp</span>
+      <div className="flex items-center gap-3"><Link className="text-sm font-medium text-[#14532D] underline dark:text-emerald-300" to="/me">Streak</Link><DarkModeToggle /><NotificationBell /><button className="text-sm font-medium text-stone-600 underline dark:text-slate-300" onClick={() => void signOut()}>Sign out</button></div>
     </header>
-    <section className="mx-auto max-w-3xl py-12">
-      <p className="font-mono text-xs uppercase tracking-wider text-[#C08A2E]">Your workspace</p>
-      <h1 className="mt-3 font-serif text-3xl text-[#1A1D1B]">Hi, {profile?.full_name || 'there'}.</h1>
-      <p className="mt-3 max-w-lg text-stone-600">You’re signed in. Feed, streak, and notification features can use the authenticated API client from here.</p>
-      <button className="primary-button mt-7" onClick={() => void verifyApiClient()}>Check API connection</button>
-      {apiState && <p className="mt-3 text-sm text-stone-600">{apiState}</p>}
+    <section className="mx-auto max-w-3xl py-8">
+      <p className="font-mono text-xs uppercase tracking-wider text-[#C08A2E]">Daily study log</p>
+      <h1 className="mt-2 font-serif text-3xl text-[#1A1D1B] dark:text-slate-100">Today’s work</h1>
+      <p className="mt-2 text-sm text-stone-600 dark:text-slate-300">Share the work. Keep the person behind it private.</p>
+      <CreatePostForm onCreated={setNewPost} />
+      <Feed newPost={newPost} />
+      <Leaderboard />
     </section>
   </main>
 }

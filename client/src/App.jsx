@@ -6,6 +6,8 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import ResetPasswordPage from './pages/ResetPasswordPage'
 import HomePage from './pages/HomePage'
 import AdminPage from './pages/AdminPage'
+import PostDetailPage from './pages/PostDetailPage'
+import ProgressPage from './pages/ProgressPage'
 
 export default function App() {
   return <Routes>
@@ -15,6 +17,8 @@ export default function App() {
     <Route path="/reset-password" element={<ResetPasswordPage />} />
     <Route element={<RequireAuth />}>
       <Route path="/" element={<HomePage />} />
+      <Route path="/post/:id" element={<PostDetailPage />} />
+      <Route path="/me" element={<ProgressPage />} />
       <Route element={<RequireAdmin />}><Route path="/admin/*" element={<AdminPage />} /></Route>
     </Route>
     <Route path="*" element={<Navigate to="/" replace />} />

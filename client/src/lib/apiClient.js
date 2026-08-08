@@ -23,5 +23,5 @@ export const api = {
   get: (path, options) => request(path, options),
   post: (path, body, options = {}) => request(path, { ...options, method: 'POST', body: body instanceof FormData ? body : JSON.stringify(body) }),
   patch: (path, body, options = {}) => request(path, { ...options, method: 'PATCH', body: body instanceof FormData ? body : JSON.stringify(body) }),
-  delete: (path, options) => request(path, { ...options, method: 'DELETE' }),
+  delete: (path, options = {}) => request(path, { ...options, method: 'DELETE', body: options.body instanceof FormData ? options.body : options.body ? JSON.stringify(options.body) : undefined }),
 }
