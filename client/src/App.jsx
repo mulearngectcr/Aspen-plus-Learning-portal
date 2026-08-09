@@ -11,9 +11,10 @@ import ProgressPage from './pages/ProgressPage'
 import CommunityPage from './pages/CommunityPage'
 import LeaderboardPage from './pages/LeaderboardPage'
 import { AppShell } from './components/AppShell'
+import { ScrollToTop } from './components/ScrollToTop'
 
 export default function App() {
-  return <Routes>
+  return <><ScrollToTop /><Routes>
     <Route path="/login" element={<LoginPage />} />
     <Route path="/signup" element={<SignupPage />} />
     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
@@ -29,5 +30,5 @@ export default function App() {
       <Route element={<RequireAdmin />}><Route path="/admin/*" element={<AdminPage />} /></Route>
     </Route>
     <Route path="*" element={<Navigate to="/" replace />} />
-  </Routes>
+  </Routes></>
 }
