@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 
 function LeafMark() {
-  return <span aria-hidden="true" className="grid size-11 place-items-center rounded-2xl bg-[#16834A] text-xl text-white shadow-[0_8px_18px_rgba(22,131,74,0.24)]">♧</span>
+  return <span aria-hidden="true" className="grid size-11 place-items-center rounded-2xl bg-[#16834A] text-xl text-white shadow-[0_8px_18px_rgba(22,131,74,0.24)]">&#9827;</span>
 }
 
 export function AuthLayout({ title, subtitle, children, footer }) {
@@ -12,9 +12,13 @@ export function AuthLayout({ title, subtitle, children, footer }) {
       <aside className="relative overflow-hidden bg-[#137B45] p-7 text-white sm:p-10 lg:min-h-[660px]">
         <div aria-hidden="true" className="absolute -right-20 -top-20 size-64 rounded-full border-[26px] border-white/10" />
         <div aria-hidden="true" className="absolute -bottom-20 -left-20 size-72 rounded-full bg-[#0B6235]" />
-        <div className="relative"><div className="flex items-center gap-3"><LeafMark /><span className="font-semibold tracking-tight">Aspen Plus<br /><span className="text-emerald-100">Learning Portal</span></span></div><div className="mt-12 max-w-sm"><p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-100">Learn together</p><h2 className="mt-4 font-serif text-4xl leading-tight">Track the work.<br />Grow the habit.</h2><p className="mt-5 max-w-xs text-sm leading-6 text-emerald-50/90">A calm, private place for daily progress, streaks, and shared momentum.</p></div><div className="mt-10 space-y-3"><div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur"><p className="text-sm font-semibold">✓ Your progress is private</p><p className="mt-1 text-xs leading-5 text-emerald-50/80">Posts stay anonymous while your streak stays yours.</p></div><div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur"><p className="text-sm font-semibold">✓ Small steps count</p><p className="mt-1 text-xs leading-5 text-emerald-50/80">Show up today and build something steady.</p></div></div></div>
+        <div className="relative">
+          <div className="flex items-center gap-3"><LeafMark /><span className="font-semibold tracking-tight">Aspen Plus<br /><span className="text-emerald-100">Learning Portal</span></span></div>
+          <div className="mt-12 max-w-sm"><p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-100">Learn together</p><h2 className="mt-4 font-serif text-4xl leading-tight">Track the work.<br />Grow the habit.</h2><p className="mt-5 max-w-xs text-sm leading-6 text-emerald-50/90">A calm, private place for daily progress, streaks, and shared momentum.</p></div>
+          <div className="mt-10 space-y-3"><div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur"><p className="text-sm font-semibold">&#10003; Your progress is private</p><p className="mt-1 text-xs leading-5 text-emerald-50/80">Posts stay anonymous while your streak stays yours.</p></div><div className="rounded-2xl border border-white/15 bg-white/10 p-4 backdrop-blur"><p className="text-sm font-semibold">&#10003; Small steps count</p><p className="mt-1 text-xs leading-5 text-emerald-50/80">Show up today and build something steady.</p></div></div>
+        </div>
       </aside>
-      <section className="p-7 sm:p-10 lg:p-12"><Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-[#137B45]"><span className="grid size-7 place-items-center rounded-lg bg-[#EAF6ED]">♧</span> Aspen Plus</Link><div className="mt-10 max-w-md"><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#16834A]">Student space</p><h1 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-[#13251D] sm:text-4xl">{title}</h1><p className="mt-3 text-sm leading-6 text-[#627468]">{subtitle}</p><div className="mt-7">{children}</div>{footer && <div className="mt-7 border-t border-[#E1ECE3] pt-5 text-center text-sm text-[#627468]">{footer}</div>}</div></section>
+      <section className="p-7 sm:p-10 lg:p-12"><Link to="/" className="inline-flex items-center gap-2 text-sm font-bold text-[#137B45]"><span className="grid size-7 place-items-center rounded-lg bg-[#EAF6ED]">&#9827;</span> Aspen Plus</Link><div className="mt-10 max-w-md"><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#16834A]">Student space</p><h1 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-[#13251D] sm:text-4xl">{title}</h1><p className="mt-3 text-sm leading-6 text-[#627468]">{subtitle}</p><div className="mt-7">{children}</div>{footer && <div className="mt-7 border-t border-[#E1ECE3] pt-5 text-center text-sm text-[#627468]">{footer}</div>}<p className="mt-8 text-center text-xs font-semibold tracking-wide text-[#829188]">A <span className="text-[#137B45]">&mu;Learn</span> initiative</p></div></section>
     </section>
   </main>
 }

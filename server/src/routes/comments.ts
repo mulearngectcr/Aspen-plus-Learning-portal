@@ -11,7 +11,11 @@ commentsRouter.post('/', async (req, res) => {
   const { post_id, parent_comment_id, content } = req.body ?? {}
   if (typeof post_id !== 'string' || !UUID.test(post_id)) throw new AppError(400, 'Invalid post ID.')
   if (typeof content !== 'string' || !content.trim() || content.length > 1_000) throw new AppError(400, 'Content must be between 1 and 1,000 characters.')
-  if (parent_comment_id !== undefined && (typeof parent_comment_id !== 'string' || !UUID.test(parent_comment_id))) throw new AppError(400, 'Invalid parent comment ID.')
+  // The client intentionally sends null for a top-level comment. Only a
+  // non-null parent must be a UUID belonging to this post.
+  if (parent_comment_id !== undefined && parent_comment_id !== null && (typeof parent_comment_id !== 'string' || !UUID.test(parent_comment_id))) {
+    throw new AppError(400, 'Invalid parent comment ID.')
+  }
 
   const { data: post, error: postError } = await supabase.from('posts').select('id').eq('id', post_id).eq('is_deleted', false).maybeSingle()
   if (postError || !post) throw new AppError(404, 'Post not found.')
