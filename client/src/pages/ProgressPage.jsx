@@ -4,41 +4,125 @@ import { Link } from 'react-router-dom'
 import { api } from '../lib/apiClient'
 
 const QUOTES = ['Small progress compounds.', 'Consistency is quiet engineering.', "Today's work becomes tomorrow's intuition.", 'One focused session is enough to move forward.']
-const DAY = 86_400_000
 const DATE_FORMATTER = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Kolkata' })
+const HEATMAP_WEEKS = 53
+const HEATMAP_CELL = 12
+const HEATMAP_GAP = 3
+const HEATMAP_DAY_LABELS = ['', 'Mon', '', 'Wed', '', 'Fri', '']
 
 const BADGES = [
-  { slug: 'first-post', name: 'First Signal', description: 'Published your first study check-in.', icon: PenLine, accent: 'from-emerald-500 via-green-500 to-lime-400', glow: 'shadow-emerald-500/25', mark: '01' },
-  { slug: 'first-comment', name: 'Conversation Starter', description: 'Joined the community with your first comment.', icon: MessageCircle, accent: 'from-sky-500 via-cyan-500 to-teal-400', glow: 'shadow-cyan-500/25', mark: '02' },
-  { slug: 'ten-post-likes', name: 'High Five', description: 'Your posts received 10 likes in total.', icon: Heart, accent: 'from-rose-500 via-pink-500 to-orange-400', glow: 'shadow-rose-500/25', mark: '10' },
-  { slug: 'five-day-streak', name: 'Warm Up', description: 'Kept a five-day streak alive.', icon: Flame, accent: 'from-amber-400 via-orange-500 to-red-500', glow: 'shadow-orange-500/25', mark: '05' },
-  { slug: 'ten-day-streak', name: 'On a Roll', description: 'Built ten days of steady momentum.', icon: Flame, accent: 'from-orange-500 via-red-500 to-pink-500', glow: 'shadow-red-500/25', mark: '10' },
-  { slug: 'twenty-day-streak', name: 'Momentum', description: 'Held your focus for twenty days.', icon: Flame, accent: 'from-violet-500 via-purple-500 to-fuchsia-500', glow: 'shadow-purple-500/25', mark: '20' },
-  { slug: 'thirty-day-streak', name: 'Monthly Mastery', description: 'Completed a full month of showing up.', icon: Award, accent: 'from-yellow-400 via-amber-500 to-orange-500', glow: 'shadow-amber-500/25', mark: '30' },
-  { slug: 'sixty-day-streak', name: 'Deep Work', description: 'Maintained a sixty-day practice.', icon: Award, accent: 'from-indigo-500 via-blue-500 to-cyan-400', glow: 'shadow-blue-500/25', mark: '60' },
-  { slug: 'ninety-day-streak', name: 'Unstoppable', description: 'Reached ninety days of progress.', icon: Award, accent: 'from-fuchsia-500 via-pink-500 to-rose-400', glow: 'shadow-pink-500/25', mark: '90' },
-  { slug: 'one-twenty-day-streak', name: 'Habit Architect', description: 'Designed a 120-day learning habit.', icon: Award, accent: 'from-teal-500 via-emerald-500 to-lime-400', glow: 'shadow-teal-500/25', mark: '120' },
-  { slug: 'one-fifty-day-streak', name: 'Iron Will', description: 'Sustained 150 days of commitment.', icon: Award, accent: 'from-slate-600 via-slate-700 to-zinc-900', glow: 'shadow-slate-500/25', mark: '150' },
-  { slug: 'one-eighty-day-streak', name: 'Legendary', description: 'Reached an extraordinary 180-day streak.', icon: Award, accent: 'from-violet-600 via-indigo-600 to-sky-500', glow: 'shadow-indigo-500/30', mark: '180' },
+  { slug: 'first-post', name: 'First Signal', description: 'Published your first study check-in.', icon: PenLine, gradient: 'linear-gradient(135deg, #0B7A43, #36B568 58%, #B8E05F)', glow: '#16834A', mark: '01' },
+  { slug: 'first-comment', name: 'Conversation Starter', description: 'Joined the community with your first comment.', icon: MessageCircle, gradient: 'linear-gradient(135deg, #1675A6, #2DB9D1 58%, #76E1D5)', glow: '#2196B4', mark: '02' },
+  { slug: 'ten-post-likes', name: 'High Five', description: 'Your posts received 10 likes in total.', icon: Heart, gradient: 'linear-gradient(135deg, #D13A62, #F06B7C 58%, #FFB169)', glow: '#E14C6C', mark: '10' },
+  { slug: 'five-day-streak', name: 'Warm Up', description: 'Kept a five-day streak alive.', icon: Flame, gradient: 'linear-gradient(135deg, #F0A91E, #F36A25 58%, #E83E3E)', glow: '#ED7A22', mark: '05' },
+  { slug: 'ten-day-streak', name: 'On a Roll', description: 'Built ten days of steady momentum.', icon: Flame, gradient: 'linear-gradient(135deg, #F05D28, #E83955 58%, #C72B72)', glow: '#E5474D', mark: '10' },
+  { slug: 'twenty-day-streak', name: 'Momentum', description: 'Held your focus for twenty days.', icon: Flame, gradient: 'linear-gradient(135deg, #6954C7, #9A55D8 58%, #DA63C5)', glow: '#815ACF', mark: '20' },
+  { slug: 'thirty-day-streak', name: 'Monthly Mastery', description: 'Completed a full month of showing up.', icon: Award, gradient: 'linear-gradient(135deg, #D89C16, #F2C94C 58%, #F6DE86)', glow: '#DCA62B', mark: '30' },
+  { slug: 'sixty-day-streak', name: 'Deep Work', description: 'Maintained a sixty-day practice.', icon: Award, gradient: 'linear-gradient(135deg, #294EC2, #387BD7 58%, #65C9E7)', glow: '#3E6FCF', mark: '60' },
+  { slug: 'ninety-day-streak', name: 'Unstoppable', description: 'Reached ninety days of progress.', icon: Award, gradient: 'linear-gradient(135deg, #AE39A9, #DF5394 58%, #FC8790)', glow: '#C84A9E', mark: '90' },
+  { slug: 'one-twenty-day-streak', name: 'Habit Architect', description: 'Designed a 120-day learning habit.', icon: Award, gradient: 'linear-gradient(135deg, #078D88, #24B98D 58%, #A6DD59)', glow: '#169E84', mark: '120' },
+  { slug: 'one-fifty-day-streak', name: 'Iron Will', description: 'Sustained 150 days of commitment.', icon: Award, gradient: 'linear-gradient(135deg, #263947, #4A6070 58%, #8396A2)', glow: '#465B68', mark: '150' },
+  { slug: 'one-eighty-day-streak', name: 'Legendary', description: 'Reached an extraordinary 180-day streak.', icon: Award, gradient: 'linear-gradient(135deg, #4831A8, #5C66DB 58%, #66BDF0)', glow: '#5962CF', mark: '180' },
 ]
 
-function Calendar({ entries }) {
+function Calendar({ entries, posts }) {
   const statuses = new Map(entries.map((entry) => [entry.date, entry.status]))
-  const today = new Date()
-  const start = new Date(today)
-  start.setDate(today.getDate() - 83)
-  start.setDate(start.getDate() - start.getDay())
-  const dates = Array.from({ length: 91 }, (_, index) => new Date(start.getTime() + index * DAY))
-  const monthLabels = dates.filter((_, index) => index % 7 === 0).map((date) => new Intl.DateTimeFormat(undefined, { month: 'short' }).format(date))
-  const tone = { posted: 'bg-[#16834A] ring-1 ring-[#0D6437]/20', missed: 'bg-[#E9B9B9]', sunday_free_pass: 'bg-[#F3C75F]' }
-  return <div className="overflow-x-auto pb-2"><div className="min-w-[560px]"><div className="ml-8 grid grid-flow-col auto-cols-[13px] gap-1.5 text-[10px] font-semibold text-[#829188]">{monthLabels.map((month, index) => <span key={`${month}-${index}`} className="col-span-4">{index % 2 === 0 ? month : ''}</span>)}</div><div className="mt-2 flex gap-2"><div className="grid grid-rows-7 gap-1.5 pt-0.5 text-[9px] font-semibold text-[#829188]"><span>Sun</span><span></span><span>Tue</span><span></span><span>Thu</span><span></span><span>Sat</span></div><div className="grid grid-flow-col grid-rows-7 auto-cols-[13px] gap-1.5">{dates.map((date) => { const key = DATE_FORMATTER.format(date); const status = statuses.get(key); return <span key={key} title={`${key}: ${status ?? 'No activity'}`} className={`size-3 rounded-[3px] transition hover:scale-125 ${tone[status] ?? 'bg-[#E8F0E9]'}`} /> })}</div></div></div></div>
+  const postCounts = new Map()
+  posts.forEach((post) => postCounts.set(post.post_date, (postCounts.get(post.post_date) ?? 0) + 1))
+
+  const weeks = useMemo(() => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const end = new Date(today)
+    end.setDate(end.getDate() + (6 - end.getDay()))
+    const start = new Date(end)
+    start.setDate(end.getDate() - (HEATMAP_WEEKS * 7 - 1))
+    const dates = Array.from({ length: HEATMAP_WEEKS * 7 }, (_, index) => {
+      const date = new Date(start)
+      date.setDate(start.getDate() + index)
+      return date
+    })
+    return Array.from({ length: HEATMAP_WEEKS }, (_, column) => dates.slice(column * 7, column * 7 + 7))
+  }, [])
+
+  const monthLabels = useMemo(() => weeks.map((week, index) => {
+    const first = week[0]
+    const previous = index > 0 ? weeks[index - 1][0] : null
+    if (!previous || first.getMonth() !== previous.getMonth()) {
+      return first.toLocaleString(undefined, { month: 'short' })
+    }
+    return ''
+  }), [weeks])
+
+  const toneFor = (status, count) => {
+    if (status === 'sunday_free_pass') return 'bg-[#F3C75F] ring-1 ring-[#D3A735]/30'
+    if (status === 'missed') return 'bg-[#E9B9B9] ring-1 ring-[#C98787]/25'
+    if (!count) return 'bg-[#DCE8DF] ring-1 ring-[#C5D6C9]'
+    if (count === 1) return 'bg-[#62C67B] ring-1 ring-[#3EAA5A]'
+    if (count === 2) return 'bg-[#249A4C] ring-1 ring-[#167C3A]'
+    return 'bg-[#087A3D] ring-1 ring-[#05632F]'
+  }
+
+  const activityLabel = (status, count) => {
+    if (count) return `${count} post${count === 1 ? '' : 's'}`
+    if (status === 'sunday_free_pass') return 'Sunday free pass'
+    if (status === 'missed') return 'Missed'
+    return 'No posts'
+  }
+
+  return (
+    <div className="overflow-x-auto pb-1">
+      <div className="inline-flex min-w-max flex-col gap-1">
+        <div className="flex pl-8" style={{ gap: HEATMAP_GAP }}>
+          {monthLabels.map((label, index) => (
+            <span
+              key={index}
+              className="truncate text-[10px] font-medium leading-none text-[#718277]"
+              style={{ width: HEATMAP_CELL, height: 14 }}
+            >
+              {label}
+            </span>
+          ))}
+        </div>
+        <div className="flex gap-2">
+          <div className="flex w-7 shrink-0 flex-col justify-around py-[2px] text-[10px] leading-none text-[#718277]">
+            {HEATMAP_DAY_LABELS.map((label, index) => (
+              <span key={index} style={{ height: HEATMAP_CELL }}>{label}</span>
+            ))}
+          </div>
+          <div className="flex" style={{ gap: HEATMAP_GAP }}>
+            {weeks.map((week, column) => (
+              <div key={column} className="flex flex-col" style={{ gap: HEATMAP_GAP }}>
+                {week.map((date) => {
+                  const key = DATE_FORMATTER.format(date)
+                  const status = statuses.get(key)
+                  const storedCount = postCounts.get(key) ?? 0
+                  // Calendar rows may outlive a soft-deleted post. A posted
+                  // streak day must still be rendered as a contribution.
+                  const count = storedCount || (status === 'posted' ? 1 : 0)
+                  return (
+                    <span
+                      key={key}
+                      title={`${key}: ${activityLabel(status, count)}`}
+                      className={`rounded-[2px] transition duration-150 hover:scale-125 hover:ring-2 hover:ring-[#137B45]/35 ${toneFor(status, count)}`}
+                      style={{ width: HEATMAP_CELL, height: HEATMAP_CELL }}
+                    />
+                  )
+                })}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function BadgeCard({ definition, earned }) {
   const Icon = definition.icon
   return <article className={`relative overflow-hidden rounded-2xl border p-4 transition ${earned ? 'border-white/60 bg-white shadow-sm hover:-translate-y-0.5 hover:shadow-md' : 'border-[#E1E8E3] bg-[#F8FAF8] opacity-70 grayscale-[0.45]'}`}>
-    <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${definition.accent}`} />
-    <div className="flex gap-3"><div className={`grid size-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br ${definition.accent} text-white shadow-lg ${definition.glow}`}><Icon size={24} strokeWidth={2.4} /></div><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-2"><h3 className="font-bold leading-5 text-[#173326]">{definition.name}</h3><span className={`rounded-md px-1.5 py-0.5 font-mono text-[10px] font-bold ${earned ? 'bg-[#EAF6ED] text-[#137B45]' : 'bg-[#E9EDEA] text-[#718277]'}`}>{earned ? definition.mark : <LockKeyhole size={11} />}</span></div><p className="mt-1 text-xs leading-5 text-[#627468]">{definition.description}</p>{earned ? <p className="mt-2 flex items-center gap-1 text-[11px] font-bold text-[#137B45]"><CheckCircle2 size={13} /> Earned {new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(new Date(earned.awarded_at))}</p> : <p className="mt-2 text-[11px] font-bold text-[#829188]">Locked collectible</p>}</div></div>
+    <div className="absolute inset-x-0 top-0 h-1" style={{ backgroundImage: definition.gradient }} />
+    <div className="flex gap-3"><div className="relative grid size-14 shrink-0 place-items-center overflow-hidden rounded-2xl text-white" style={{ backgroundImage: definition.gradient, boxShadow: `0 10px 22px ${definition.glow}55` }}><span aria-hidden="true" className="absolute -right-3 -top-4 size-10 rounded-full bg-white/25" /><span aria-hidden="true" className="absolute -bottom-3 -left-3 size-7 rounded-full border-2 border-white/30" /><Icon className="relative" size={25} strokeWidth={2.5} /></div><div className="min-w-0 flex-1"><div className="flex items-start justify-between gap-2"><h3 className="font-bold leading-5 text-[#173326]">{definition.name}</h3><span className={`rounded-md px-1.5 py-0.5 font-mono text-[10px] font-bold ${earned ? 'bg-[#EAF6ED] text-[#137B45]' : 'bg-[#E9EDEA] text-[#718277]'}`}>{earned ? definition.mark : <LockKeyhole size={11} />}</span></div><p className="mt-1 text-xs leading-5 text-[#627468]">{definition.description}</p>{earned ? <p className="mt-2 flex items-center gap-1 text-[11px] font-bold text-[#137B45]"><CheckCircle2 size={13} /> Earned {new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(new Date(earned.awarded_at))}</p> : <p className="mt-2 text-[11px] font-bold text-[#829188]">Locked collectible</p>}</div></div>
   </article>
 }
 
@@ -54,5 +138,5 @@ export default function ProgressPage() {
   if (!data && !error) return <main className="grid min-h-screen place-items-center bg-[#F6FAF7] text-sm text-[#627468]">Loading your progress...</main>
   if (error && !data) return <main className="grid min-h-screen place-items-center bg-[#F6FAF7]"><p className="error">{error} <button onClick={() => void load()} className="underline">Try again</button></p></main>
   const earnedBySlug = new Map(data.badges.map((badge) => [badge.slug, badge]))
-  return <main className="min-h-screen bg-[#F6FAF7] px-4 py-6"><Celebration visible={celebrate} /><section className="mx-auto max-w-3xl"><header className="flex items-center justify-between border-b border-[#D6E5D9] pb-5"><Link className="text-sm font-bold text-[#137B45] underline" to="/">&larr; Check-in</Link><span className="rounded-full bg-[#EAF6ED] px-3 py-1 text-xs font-bold text-[#137B45]">Day {data.days_in_bootcamp}</span></header><section className="mt-7 rounded-2xl border border-[#CFE6D5] bg-white p-6 shadow-sm"><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#16834A]">Your current streak</p><div className="mt-3 flex items-end gap-3"><span className={`font-mono text-6xl font-bold text-[#137B45] ${celebrate ? 'flame-pulse' : ''}`}>{data.current_streak}</span><span className="pb-2 text-3xl">&#128293;</span></div><p className="mt-3 text-sm leading-6 text-[#627468]">{encouragement}</p><p className="mt-5 rounded-xl bg-[#EEF8F0] px-4 py-3 font-serif text-lg text-[#17633A]">&ldquo;{QUOTES[quoteIndex]}&rdquo;</p></section><div className="grid gap-5 py-6 sm:grid-cols-2"><section className="rounded-2xl border border-[#D6E5D9] bg-white p-5 shadow-sm"><h2 className="font-serif text-xl">Streak calendar</h2><p className="mt-1 text-xs text-[#718277]">A rolling 13-week view of your learning rhythm.</p><div className="mt-4"><Calendar entries={data.streak_calendar} /></div><div className="mt-3 flex flex-wrap gap-3 text-[11px] text-[#718277]"><span className="flex items-center gap-1"><i className="size-2.5 rounded-[3px] bg-[#16834A]" /> Posted</span><span className="flex items-center gap-1"><i className="size-2.5 rounded-[3px] bg-[#F3C75F]" /> Sunday pass</span><span className="flex items-center gap-1"><i className="size-2.5 rounded-[3px] bg-[#E9B9B9]" /> Missed</span></div></section><section className="rounded-2xl border border-[#D6E5D9] bg-white p-5 shadow-sm"><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#718277]">Best run</p><p className="mt-2 font-mono text-4xl font-bold text-[#137B45]">{data.longest_streak} &#128293;</p><p className="mt-5 text-xs font-bold uppercase tracking-[0.16em] text-[#718277]">Total posts</p><p className="mt-2 font-mono text-3xl font-bold text-[#137B45]">{data.total_post_count}</p></section></div><section className="rounded-2xl border border-[#D6E5D9] bg-white p-5 shadow-sm"><div className="flex items-start justify-between gap-4"><div><h2 className="font-serif text-2xl">Badge cabinet</h2><p className="mt-1 text-sm text-[#627468]">Private collectibles for your work and consistency.</p></div><span className="rounded-xl bg-[#EEF8F0] px-3 py-2 text-sm font-bold text-[#137B45]">{data.badges.length}/{BADGES.length}</span></div><div className="mt-5 grid gap-3 sm:grid-cols-2">{BADGES.map((definition) => <BadgeCard key={definition.slug} definition={definition} earned={earnedBySlug.get(definition.slug)} />)}</div></section><section className="mt-6 rounded-2xl border border-[#D6E5D9] bg-white p-5 shadow-sm"><h2 className="font-serif text-2xl">Your post history</h2><p className="mt-1 text-sm text-[#627468]">Only you can access this history.</p>{data.posts.length ? <div className="mt-4">{data.posts.map((post) => <article key={post.id} className="border-b border-[#E1ECE3] py-5 last:border-0"><div className="flex items-start justify-between gap-4"><time className="text-xs text-[#718277]">{new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(post.created_at))}</time><button onClick={() => void removePost(post.id)} className="text-xs font-semibold text-[#A74545] underline">Delete</button></div><p className="mt-3 whitespace-pre-wrap text-sm leading-6">{post.content}</p>{(post.image_url_1 || post.image_url_2) && <div className="mt-3 grid grid-cols-2 gap-2">{[post.image_url_1, post.image_url_2].filter(Boolean).map((url) => <img key={url} src={url} alt="Your post attachment" className="aspect-square rounded-xl object-cover" />)}</div>}</article>)}</div> : <p className="py-8 text-sm text-[#627468]">No posts yet. Your next study update starts the record.</p>}</section></section></main>
+  return <main className="min-h-screen bg-[#F6FAF7] px-4 py-6"><Celebration visible={celebrate} /><section className="mx-auto max-w-3xl"><header className="flex items-center justify-between border-b border-[#D6E5D9] pb-5"><Link className="text-sm font-bold text-[#137B45] underline" to="/">&larr; Check-in</Link><span className="rounded-full bg-[#EAF6ED] px-3 py-1 text-xs font-bold text-[#137B45]">Day {data.days_in_bootcamp}</span></header><div className="mt-7 flex flex-col gap-8"><section className="rounded-2xl border border-[#CFE6D5] bg-white p-6 shadow-sm"><div className="flex flex-wrap items-start justify-between gap-5"><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-[#16834A]">Your current streak</p><div className="mt-3 flex items-end gap-3"><span className={`font-mono text-6xl font-bold text-[#137B45] ${celebrate ? 'flame-pulse' : ''}`}>{data.current_streak}</span><span className="pb-2 text-3xl">&#128293;</span></div><p className="mt-3 max-w-md text-sm leading-6 text-[#627468]">{encouragement}</p></div><div className="flex gap-2"><div className="rounded-xl border border-[#D6E5D9] bg-[#F7FBF8] px-4 py-3"><p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#718277]">Best run</p><p className="mt-1 font-mono text-2xl font-bold text-[#137B45]">{data.longest_streak}</p></div><div className="rounded-xl border border-[#D6E5D9] bg-[#F7FBF8] px-4 py-3"><p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#718277]">Posts</p><p className="mt-1 font-mono text-2xl font-bold text-[#137B45]">{data.total_post_count}</p></div></div></div><p className="mt-5 rounded-xl bg-[#EEF8F0] px-4 py-3 font-serif text-lg text-[#17633A]">&ldquo;{QUOTES[quoteIndex]}&rdquo;</p></section><section className="rounded-2xl border border-[#D6E5D9] bg-white p-6 shadow-sm"><div className="flex items-start justify-between gap-4"><div><h2 className="font-serif text-xl">Activity heatmap</h2><p className="mt-1 text-xs text-[#718277]">{data.total_post_count} posts across the last year. Darker green means more check-ins that day.</p></div><span className="shrink-0 rounded-lg bg-[#EEF8F0] px-2 py-1 text-[11px] font-bold text-[#137B45]">Last 12 months</span></div><div className="mt-6 px-1"><Calendar entries={data.streak_calendar} posts={data.posts} /></div><div className="mt-6 flex flex-wrap items-center gap-3 text-[11px] text-[#718277]"><span>Less</span><i className="size-3 rounded-[3px] bg-[#EDF2EE]" /><i className="size-3 rounded-[3px] bg-[#8ED39F]" /><i className="size-3 rounded-[3px] bg-[#42A961]" /><i className="size-3 rounded-[3px] bg-[#087A3D]" /><span>More</span><span className="ml-2 flex items-center gap-1"><i className="size-3 rounded-[3px] bg-[#F3C75F]" /> Sunday pass</span><span className="flex items-center gap-1"><i className="size-3 rounded-[3px] bg-[#E9B9B9]" /> Missed</span></div></section><section className="rounded-2xl border border-[#D6E5D9] bg-white p-6 shadow-sm"><div className="flex items-start justify-between gap-4"><div><h2 className="font-serif text-2xl">Badge cabinet</h2><p className="mt-1 text-sm text-[#627468]">Private collectibles for your work and consistency.</p></div><span className="rounded-xl bg-[#EEF8F0] px-3 py-2 text-sm font-bold text-[#137B45]">{data.badges.length}/{BADGES.length}</span></div><div className="mt-5 grid gap-3 sm:grid-cols-2">{BADGES.map((definition) => <BadgeCard key={definition.slug} definition={definition} earned={earnedBySlug.get(definition.slug)} />)}</div></section></div><section className="mt-8 rounded-2xl border border-[#D6E5D9] bg-white p-5 shadow-sm"><h2 className="font-serif text-2xl">Your post history</h2><p className="mt-1 text-sm text-[#627468]">Only you can access this history.</p>{data.posts.length ? <div className="mt-4">{data.posts.map((post) => <article key={post.id} className="border-b border-[#E1ECE3] py-5 last:border-0"><div className="flex items-start justify-between gap-4"><time className="text-xs text-[#718277]">{new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(post.created_at))}</time><button onClick={() => void removePost(post.id)} className="text-xs font-semibold text-[#A74545] underline">Delete</button></div><p className="mt-3 whitespace-pre-wrap text-sm leading-6">{post.content}</p>{(post.image_url_1 || post.image_url_2) && <div className="mt-3 grid grid-cols-2 gap-2">{[post.image_url_1, post.image_url_2].filter(Boolean).map((url) => <img key={url} src={url} alt="Your post attachment" className="aspect-square rounded-xl object-cover" />)}</div>}</article>)}</div> : <p className="py-8 text-sm text-[#627468]">No posts yet. Your next study update starts the record.</p>}</section></section></main>
 }
