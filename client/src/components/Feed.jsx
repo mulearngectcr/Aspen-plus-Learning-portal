@@ -17,7 +17,6 @@ export function Feed({ newPost }) {
   const [posts, setPosts] = useState([]); const [cursor, setCursor] = useState(null); const [loading, setLoading] = useState(true); const [loadingMore, setLoadingMore] = useState(false); const [error, setError] = useState(''); const sentinel = useRef(null)
   const load = useCallback(async (reset = false) => { if (loadingMore) return; reset ? setLoading(true) : setLoadingMore(true); setError(''); try { const activeCursor = reset ? null : cursor; const response = await api.get(`/feed?limit=12${activeCursor ? `&cursor=${encodeURIComponent(activeCursor)}` : ''}`); setPosts((current) => reset ? response.posts : [...current, ...response.posts]); setCursor(response.next_cursor) } catch (issue) { setError(issue.message) } finally { setLoading(false); setLoadingMore(false) } }, [cursor, loadingMore])
   useEffect(() => { void load(true) }, [])
-  useEffect(() => { const timer = window.setInterval(() => void load(true), 10000); return () => window.clearInterval(timer) }, [load])
   useEffect(() => { if (newPost) setPosts((current) => [newPost, ...current.filter((post) => post.id !== newPost.id)]) }, [newPost])
   useEffect(() => { const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting && cursor && !loadingMore) void load() }, { rootMargin: '300px' }); if (sentinel.current) observer.observe(sentinel.current); return () => observer.disconnect() }, [cursor, loadingMore, load])
   if (loading) return <FeedSkeleton />

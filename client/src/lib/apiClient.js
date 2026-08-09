@@ -1,6 +1,13 @@
 import { supabase } from './supabase'
 
-const baseUrl = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
+// Express deliberately keeps all application endpoints under /api. Accept a
+// host-only VITE_API_URL as well as one that already includes /api so local
+// development and deployed environments cannot accidentally call /feed, /me,
+// etc. at the server root.
+const configuredBaseUrl = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
+const baseUrl = configuredBaseUrl && !configuredBaseUrl.endsWith('/api')
+  ? `${configuredBaseUrl}/api`
+  : configuredBaseUrl || '/api'
 
 async function request(path, options = {}) {
   const { data: { session } } = await supabase.auth.getSession()
