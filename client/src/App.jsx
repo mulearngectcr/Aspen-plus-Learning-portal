@@ -8,6 +8,9 @@ import HomePage from './pages/HomePage'
 import AdminPage from './pages/AdminPage'
 import PostDetailPage from './pages/PostDetailPage'
 import ProgressPage from './pages/ProgressPage'
+import CommunityPage from './pages/CommunityPage'
+import LeaderboardPage from './pages/LeaderboardPage'
+import { AppShell } from './components/AppShell'
 
 export default function App() {
   return <Routes>
@@ -16,9 +19,13 @@ export default function App() {
     <Route path="/forgot-password" element={<ForgotPasswordPage />} />
     <Route path="/reset-password" element={<ResetPasswordPage />} />
     <Route element={<RequireAuth />}>
-      <Route path="/" element={<HomePage />} />
-      <Route path="/post/:id" element={<PostDetailPage />} />
-      <Route path="/me" element={<ProgressPage />} />
+      <Route element={<AppShell />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/community" element={<CommunityPage />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
+        <Route path="/post/:id" element={<PostDetailPage />} />
+        <Route path="/me" element={<ProgressPage />} />
+      </Route>
       <Route element={<RequireAdmin />}><Route path="/admin/*" element={<AdminPage />} /></Route>
     </Route>
     <Route path="*" element={<Navigate to="/" replace />} />

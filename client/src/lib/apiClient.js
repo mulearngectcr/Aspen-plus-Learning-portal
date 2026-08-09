@@ -5,7 +5,7 @@ import { supabase } from './supabase'
 // development and deployed environments cannot accidentally call /feed, /me,
 // etc. at the server root.
 const configuredBaseUrl = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
-const baseUrl = configuredBaseUrl && !configuredBaseUrl.endsWith('/api')
+export const apiBaseUrl = configuredBaseUrl && !configuredBaseUrl.endsWith('/api')
   ? `${configuredBaseUrl}/api`
   : configuredBaseUrl || '/api'
 
@@ -19,7 +19,7 @@ async function request(path, options = {}) {
     headers.set('Content-Type', 'application/json')
   }
 
-  const response = await fetch(`${baseUrl}${path}`, { ...options, headers })
+  const response = await fetch(`${apiBaseUrl}${path}`, { ...options, headers })
   const isJson = response.headers.get('content-type')?.includes('application/json')
   const payload = response.status === 204 ? null : isJson ? await response.json() : await response.text()
   if (!response.ok) throw new Error(payload?.message || payload?.error || 'Request failed.')

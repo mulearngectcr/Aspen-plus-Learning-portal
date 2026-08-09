@@ -14,6 +14,7 @@ import { leaderboardRouter } from './routes/leaderboard.js'
 import { meRouter } from './routes/me.js'
 import { notificationsRouter } from './routes/notifications.js'
 import { postsRouter } from './routes/posts.js'
+import { streamRouter } from './routes/stream.js'
 
 export const app = express()
 
@@ -29,6 +30,7 @@ app.use('/api/likes', verifyAuth, writeRateLimit, likesRouter)
 app.use('/api/notifications', verifyAuth, notificationsRouter)
 app.use('/api/me', verifyAuth, meRouter)
 app.use('/api/leaderboard', verifyAuth, leaderboardRouter)
+app.use('/api/stream', verifyAuth, streamRouter)
 
 app.use('/api/admin', verifyAuth, requireAdmin, adminRouter)
 
