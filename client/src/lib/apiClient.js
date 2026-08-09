@@ -22,6 +22,7 @@ async function request(path, options = {}) {
   const response = await fetch(`${apiBaseUrl}${path}`, { ...options, headers })
   const isJson = response.headers.get('content-type')?.includes('application/json')
   const payload = response.status === 204 ? null : isJson ? await response.json() : await response.text()
+  if (response.status === 401) await supabase.auth.signOut({ scope: 'local' })
   if (!response.ok) throw new Error(payload?.message || payload?.error || 'Request failed.')
   return payload
 }

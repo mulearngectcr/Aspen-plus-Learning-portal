@@ -9,4 +9,6 @@ if (!url || !publishableKey) {
 
 // This browser client uses only the public/publishable key. Never put the
 // service_role key in any VITE_ variable.
-export const supabase = createClient(url, publishableKey)
+export const supabase = createClient(url, publishableKey, {
+  auth: { autoRefreshToken: true, persistSession: true, detectSessionInUrl: true },
+})

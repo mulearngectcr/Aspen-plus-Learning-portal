@@ -9,7 +9,7 @@ function reasonFrom(value: unknown) { if (typeof value !== 'string' || !value.tr
 
 function adminPost(row: any) {
   const author = profileOf(row.profiles)
-  return { id: row.id, content: row.content, image_url_1: row.image_url_1, image_url_2: row.image_url_2, created_at: row.created_at, post_date: row.post_date, is_deleted: row.is_deleted, author: { full_name: author?.full_name ?? 'Unknown', username: author?.username ?? '', avatar_url: author?.avatar_url ?? null } }
+  return { id: row.id, content: row.content, image_url_1: row.image_url_1, image_url_2: row.image_url_2, created_at: row.created_at, post_date: row.post_date, is_deleted: row.is_deleted, author: { full_name: author?.full_name ?? 'Unknown', username: author?.username ?? '', avatar_url: author?.avatar_url ?? null, group_number: author?.group_number ?? 0, semester: author?.semester ?? null } }
 }
 function adminComment(row: any) {
   const author = profileOf(row.profiles)
@@ -25,7 +25,7 @@ export const adminRouter = Router()
 
 adminRouter.get('/posts', async (req, res) => {
   const includeDeleted = req.query.includeDeleted === 'true'; const limit = limitFrom(req.query.limit)
-  let query = supabase.from('posts').select('id, content, image_url_1, image_url_2, created_at, post_date, is_deleted, profiles!inner(full_name, username, avatar_url)').order('created_at', { ascending: false }).order('id', { ascending: false }).limit(limit + 1)
+  let query = supabase.from('posts').select('id, content, image_url_1, image_url_2, created_at, post_date, is_deleted, profiles!inner(full_name, username, avatar_url, group_number, semester)').order('created_at', { ascending: false }).order('id', { ascending: false }).limit(limit + 1)
   if (!includeDeleted) query = query.eq('is_deleted', false)
   if (typeof req.query.cursor === 'string') { const [createdAt, id] = req.query.cursor.split('|'); if (!createdAt || !UUID.test(id)) throw new AppError(400, 'Invalid cursor.'); query = query.or(`created_at.lt.${createdAt},and(created_at.eq.${createdAt},id.lt.${id})`) }
   const { data, error } = await query
